@@ -49,7 +49,6 @@ fun MainScreen(mainViewModel: MainViewModel, navController: NavController, modif
     }
 }
 
-@Preview(showBackground = false)
 @Composable
 fun TopBar(viewModel: MainViewModel) {
     val rememberIndex by viewModel.pageState
@@ -57,7 +56,6 @@ fun TopBar(viewModel: MainViewModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0x1000ff00))
             .padding(16.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -108,7 +106,7 @@ fun Content(viewModel: MainViewModel, navController: NavController, modifier: Mo
         when (rememberIndex) {
             0 -> {
                 log("Content: 明细")
-                FlowListScreen(viewModel, navController)
+                FlowListScreen()
                 //明细
             }
 
