@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.allever.android.compose.flow.money.MainViewModel
 import app.allever.android.compose.flow.money.R
+import app.allever.android.compose.flow.money.lib.log
+import app.allever.android.compose.flow.money.lib.toast
 import coil.compose.AsyncImage
 
 @Composable
@@ -63,7 +67,7 @@ fun Content(viewModel: MainViewModel, navController: NavController, modifier: Mo
 
 @Composable
 fun Navigation(viewModel: MainViewModel, navController: NavController) {
-    val rememberIndex = viewModel.pageState
+    var rememberIndex by viewModel.pageState
     Box(
         modifier = Modifier
             .height(84.dp)
@@ -85,24 +89,24 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
             NavigationItem(
                 R.drawable.fm_ic_default_icon,
                 "明细",
-                selected = rememberIndex.intValue == 0,
-                modifier = Modifier.weight(1f)
+                selected = rememberIndex == 0,
+                modifier = Modifier
+                    .weight(1f)
             ) {
-                Log.d("NavigationItem", "NavigationItem: 明细")
-                rememberIndex.intValue = 0
-                viewModel.pageState.intValue = 0
+                rememberIndex = 0
+                toast("明细, index = ${rememberIndex}")
             }
 
             //统计
             NavigationItem(
                 R.drawable.fm_ic_default_icon,
                 "统计",
-                selected = rememberIndex.intValue == 1,
-                modifier = Modifier.weight(1f)
+                selected = rememberIndex == 1,
+                modifier = Modifier
+                    .weight(1f)
             ) {
-                Log.d("NavigationItem", "NavigationItem: 统计")
-                rememberIndex.intValue = 1
-                viewModel.pageState.intValue = 1
+                rememberIndex = 1
+                toast("统计, index = ${rememberIndex}")
             }
 
             //记一笔
@@ -112,7 +116,7 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
                     .fillMaxHeight()
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        Log.d("NavigationItem", "NavigationItem: 记一笔")
+                        toast("记一笔, index = ${rememberIndex}")
                     },
                 contentAlignment = Alignment.Center,
             ) {
@@ -147,24 +151,23 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
             NavigationItem(
                 R.drawable.fm_ic_default_icon,
                 "资产",
-                selected = rememberIndex.intValue == 2,
-                modifier = Modifier.weight(1f)
+                selected = rememberIndex == 2,
+                modifier = Modifier
+                    .weight(1f)
             ) {
-                rememberIndex.intValue = 2
-                viewModel.pageState.intValue = 2
-                Log.d("NavigationItem", "NavigationItem: 资产")
+                rememberIndex = 2
+                toast("资产, index = ${rememberIndex}")
             }
             //设置
-            viewModel.pageState.intValue = 3
             NavigationItem(
                 R.drawable.fm_ic_default_icon,
                 "设置",
-                selected = rememberIndex.intValue == 3,
-                modifier = Modifier.weight(1f)
+                selected = rememberIndex == 3,
+                modifier = Modifier
+                    .weight(1f)
             ) {
-                rememberIndex.intValue = 3
-                viewModel.pageState.intValue = 3
-                Log.d("NavigationItem", "NavigationItem: 设置")
+                rememberIndex = 3
+                toast("设置, index = ${rememberIndex}")
             }
         }
     }
@@ -175,6 +178,7 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
 fun NavigationItem(
     icon: Int, label: String, selected: Boolean, modifier: Modifier, click: () -> Unit
 ) {
+    log("NavigationItem: $label, $selected")
     val textColor = if (selected) Color.Black else Color.Gray
     val iconColor = if (selected) Color.Black else Color.Gray
     Box(
