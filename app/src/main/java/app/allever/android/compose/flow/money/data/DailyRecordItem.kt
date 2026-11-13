@@ -15,12 +15,22 @@ data class DailyDetail(
     val time: String,
     val pay: String,
     val value: Float,
-    val type: Int
+    val type: Int,
+    val payType: String
 )
 
 class Type {
     companion object {
         const val INCOME = 0
         const val OUTCOME = 1
+    }
+}
+
+class PayType {
+    companion object {
+        const val CASH = "现金"
+        const val BANK = "银行"
+        const val ALIPAY = "支付宝"
+        const val WECHAT = "微信"
     }
 }

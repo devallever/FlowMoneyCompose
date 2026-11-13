@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.allever.android.compose.flow.money.MainViewModel
 import app.allever.android.compose.flow.money.R
+import app.allever.android.compose.flow.money.data.Type
 import app.allever.android.compose.flow.money.theme.GreenDeep
 import app.allever.android.compose.flow.money.theme.GreenLight
 import app.allever.android.compose.flow.money.theme.GreenMiddle
@@ -67,10 +68,77 @@ fun FlowListScreen(viewModel: MainViewModel) {
                 FlowListScreenList(viewModel)
             }
 
+            item {
+                //weekly report
+                FlowListScreenWeeklyReport()
+            }
+
 
         }
     }
 }
+
+@Composable
+fun FlowListScreenWeeklyReport() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFFE4F6ED))
+            .padding(16.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.fm_ic_default_icon),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(GreenDeep),
+            modifier = Modifier.size(22.dp)
+        )
+
+        Column(modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .weight(1f)) {
+            //保持得很好
+            //本周非必要支出环比下降4%
+            Text(
+                text = "保持得很好",
+                color = Color.Black,
+                fontSize = 14.sp,
+                lineHeight = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(0.dp)
+            )
+            Text(
+                text = "本周非必要支出环比下降4%",
+                color = Color.Black,
+                fontSize = 12.sp,
+                lineHeight = 12.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(0.dp)
+            )
+
+        }
+
+        //圆角背景，居右： 看周报
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(90.dp))
+                .background(Color(0xFFD8E8E0))
+                .padding(horizontal = 8.dp, vertical = 4.dp), contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "看周报",
+                color = GreenDeep,
+                fontSize = 12.sp,
+                lineHeight = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(0.dp)
+            )
+        }
+    }
+}
+
 
 @Composable
 fun FlowListScreenSort(viewModel: MainViewModel) {
@@ -193,12 +261,13 @@ fun FlowListScreenList(viewModel: MainViewModel) {
             ) {
                 item.list.forEachIndexed { index, detail ->
                     val marginTop = if (index == 0) 16.dp else 8.dp
-                    val marginBottom = if (index == item.list.size - 1) 16.dp else 8.dp
+                    val marginBottom = 8.dp
 
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = marginTop, bottom = marginBottom, end = 16.dp)
+                        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                            .padding(
+                                start = 16.dp, top = marginTop, bottom = marginBottom, end = 16.dp
+                            )
                             .fillMaxWidth()
                     ) {
                         Box(
@@ -217,33 +286,57 @@ fun FlowListScreenList(viewModel: MainViewModel) {
                             )
                         }
 
-                        Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 8.dp)
+                        ) {
                             //title
                             Text(
                                 text = detail.title,
                                 color = Color.Black,
-                                fontSize = 14.sp,
-                                lineHeight = 14.sp,
+                                fontSize = 15.sp,
+                                lineHeight = 15.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(0.dp)
                             )
-                            //sort
-                            Text(
-                                text = detail.sort,
-                                color = Color.Black,
-                                fontSize = 12.sp,
-                                lineHeight = 12.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(0.dp)
-                            )
+
+                            Row {
+                                //sort
+                                Text(
+                                    text = detail.sort,
+                                    color = Color.Gray,
+                                    fontSize = 11.sp,
+                                    lineHeight = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier
+                                        .padding(0.dp)
+                                        .weight(1f)
+                                )
+                                //time-payType
+                                Text(
+                                    text = "${detail.time} ${detail.payType}",
+                                    color = Color.Gray,
+                                    fontSize = 11.sp,
+                                    lineHeight = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier
+                                        .padding(0.dp)
+                                        .weight(2f)
+                                )
+                            }
+
                         }
 
                         //value
+                        val valueColor = if (detail.type == Type.INCOME) GreenDeep else Color.Black
+                        val pre = if (detail.type == Type.INCOME) "+" else "-"
                         Text(
                             modifier = Modifier.padding(0.dp),
-                            text = "¥${detail.value}",
+                            text = "${pre}¥${detail.value}",
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = valueColor
                         )
                     }
                 }
@@ -254,7 +347,6 @@ fun FlowListScreenList(viewModel: MainViewModel) {
 }
 
 
-@Preview
 @Composable
 fun FlowListScreenPreview() {
     Card(

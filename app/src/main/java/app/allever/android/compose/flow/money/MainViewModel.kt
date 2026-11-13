@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import app.allever.android.compose.flow.money.data.DailyDetail
 import app.allever.android.compose.flow.money.data.DailyRecordItem
+import app.allever.android.compose.flow.money.data.PayType
 import app.allever.android.compose.flow.money.data.SortItem
 import app.allever.android.compose.flow.money.data.Type
 
@@ -31,88 +32,97 @@ class MainViewModel : ViewModel() {
         add(DailyRecordItem("今天","星期四",  230.9f, 0f, mutableListOf(
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "早餐",
-                "餐饮",
-                "2023-04-07 08:00",
-                "支付",
+                "10月薪资发放与岗位",
+                "工资",
+                "08:00",
+                "银行卡",
                 23.0f,
-                Type.OUTCOME
+                Type.INCOME,
+                PayType.BANK
             ),
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "午餐",
+                "星巴克拿铁&燕麦曲奇",
                 "餐饮",
-                "2023-04-07 12:00",
+                "12:00",
                 "支付",
                 50.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.ALIPAY
             ),
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "晚餐",
-                "餐饮",
-                "2023-04-07 18:00",
+                "地铁通勤自动扣费",
+                "交通",
+                "18:00",
                 "支付",
                 100.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.WECHAT
             ),
         )))
         add(DailyRecordItem("昨天","星期三",  100.0f, 0f, mutableListOf(
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "早餐",
+                "万达影城双人观影套餐",
                 "餐饮",
-                "2023-04-06 08:00",
+                "08:00",
                 "支付",
                 23.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.ALIPAY
             ),
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "午餐",
+                "海底捞火锅4人小聚晚餐",
                 "餐饮",
-                "2023-04-06 12:00",
+                "12:00",
                 "支付",
                 50.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.CASH
             ),
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "晚餐",
+                "瑞幸生椰拿铁(无糖)",
                 "餐饮",
-                "2023-04-06 18:00",
+                "18:00",
                 "支付",
                 100.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.BANK
             ),
         )))
         add(DailyRecordItem("10月22日","星期二",  50.0f, 0f, mutableListOf(
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
-                "早餐",
+                "屈臣氏个人洗护旅行装",
                 "餐饮",
-                "2023-04-05 08:00",
+                "08:00",
                 "支付",
                 23.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.ALIPAY
             ),
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
                 "午餐",
                 "餐饮",
-                "2023-04-05 12:00",
+                "12:00",
                 "支付",
                 50.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.WECHAT
             ),
             DailyDetail(
                 R.drawable.fm_ic_default_icon,
                 "晚餐",
                 "餐饮",
-                "2023-04-05 18:00",
+                "18:00",
                 "支付",
                 100.0f,
-                Type.OUTCOME
+                Type.OUTCOME,
+                PayType.CASH
             ),
         )))
     }
