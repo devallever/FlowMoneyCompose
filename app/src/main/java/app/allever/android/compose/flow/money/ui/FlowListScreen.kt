@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -47,17 +49,25 @@ import app.allever.android.compose.flow.money.theme.GreenMiddle
 @Composable
 fun FlowListScreen(viewModel: MainViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            //preview
-            FlowListScreenPreview()
-            //Sort
-            FlowListScreenSort(viewModel)
-            //List
-            FlowListScreenList()
+            item {
+                //preview
+                FlowListScreenPreview()
+            }
+
+            item {
+                //Sort
+                FlowListScreenSort(viewModel)
+            }
+
+            item {
+                //List
+                FlowListScreenList(viewModel)
+            }
+
+
         }
     }
 }
@@ -86,8 +96,7 @@ fun FlowListScreenSort(viewModel: MainViewModel) {
                     painter = painterResource(id = item.icon),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(iconTint),
-                    modifier = Modifier
-                        .size(16.dp)
+                    modifier = Modifier.size(16.dp)
                 )
                 Text(
                     text = item.name,
@@ -104,9 +113,144 @@ fun FlowListScreenSort(viewModel: MainViewModel) {
     }
 }
 
-@Preview
 @Composable
-fun FlowListScreenList() {
+fun FlowListScreenList(viewModel: MainViewModel) {
+    viewModel.dailyRecordList.forEachIndexed { index, item ->
+        val topMargin = if (index == 0) 16.dp else 8.dp
+        val bottomMargin = if (index == viewModel.dailyRecordList.size - 1) 16.dp else 0.dp
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = topMargin, bottom = bottomMargin)
+        ) {
+            //time line
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    //date
+                    Text(
+                        text = item.title,
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        lineHeight = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(0.dp)
+                    )
+                    //week
+                    Text(
+                        text = item.week,
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
+                //Row 收入、支出居右
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    //income
+                    Text(
+                        text = "入 ¥${item.income}",
+                        color = GreenDeep,
+                        fontSize = 12.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(0.dp)
+                    )
+                    //outcome
+                    Text(
+                        text = "支 ¥${item.outcome}",
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+
+            //detailCard
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                item.list.forEachIndexed { index, detail ->
+                    val marginTop = if (index == 0) 16.dp else 8.dp
+                    val marginBottom = if (index == item.list.size - 1) 16.dp else 8.dp
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = marginTop, bottom = marginBottom, end = 16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(GreenMiddle)
+                        ) {
+                            Image(
+                                painter = painterResource(id = detail.icon),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(GreenDeep),
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .align(Alignment.Center)
+                            )
+                        }
+
+                        Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                            //title
+                            Text(
+                                text = detail.title,
+                                color = Color.Black,
+                                fontSize = 14.sp,
+                                lineHeight = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(0.dp)
+                            )
+                            //sort
+                            Text(
+                                text = detail.sort,
+                                color = Color.Black,
+                                fontSize = 12.sp,
+                                lineHeight = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(0.dp)
+                            )
+                        }
+
+                        //value
+                        Text(
+                            modifier = Modifier.padding(0.dp),
+                            text = "¥${detail.value}",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -229,10 +373,11 @@ fun FlowListScreenPreview() {
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFF1E916E))
-                    .padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Row() {
+                    Row {
                         Image(
                             painter = painterResource(id = R.drawable.fm_ic_arrow_down_2),
                             contentDescription = null,
