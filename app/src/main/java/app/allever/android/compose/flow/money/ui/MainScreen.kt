@@ -30,6 +30,7 @@ import app.allever.android.compose.flow.money.MainViewModel
 import app.allever.android.compose.flow.money.R
 import app.allever.android.compose.flow.money.lib.log
 import app.allever.android.compose.flow.money.lib.toast
+import app.allever.android.compose.flow.money.theme.GreenDeep
 import coil.compose.AsyncImage
 
 @Composable
@@ -58,11 +59,34 @@ fun TopBar(viewModel: MainViewModel, naviController: NavController) {
 
 @Composable
 fun Content(viewModel: MainViewModel, navController: NavController, modifier: Modifier) {
+    var rememberIndex by viewModel.pageState
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0x10ffff00))
-    )
+    ) {
+        when (rememberIndex) {
+            0 -> {
+                log("Content: 明细")
+                FlowListScreen(viewModel, navController)
+                //明细
+            }
+            1 -> {
+                log("Content: 统计")
+                StaticScreen(viewModel, navController)
+                //统计
+            }
+            2 -> {
+                log("Content: 资产")
+                WealthScreen(viewModel, navController)
+                //资产
+            }
+            3 -> {
+                log("Content: 设置")
+                SettingScreen(viewModel, navController)
+                //设置
+            }
+        }
+    }
 }
 
 @Composable
@@ -71,7 +95,6 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
     Box(
         modifier = Modifier
             .height(84.dp)
-            .background(Color(0x100000ff))
     ) {
         //底部导航背景
         Box(
@@ -79,12 +102,12 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
                 .fillMaxWidth()
                 .height(72.dp)
                 .align(Alignment.BottomEnd)
+                .background(Color(0xffE6F2EA))
         )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .background(Color(0x00ff00))
         ) {
             NavigationItem(
                 R.drawable.fm_ic_default_icon,
@@ -116,7 +139,7 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
                     .fillMaxHeight()
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        toast("记一笔, index = ${rememberIndex}")
+                        navController.navigate("input")
                     },
                 contentAlignment = Alignment.Center,
             ) {
@@ -126,7 +149,7 @@ fun Navigation(viewModel: MainViewModel, navController: NavController) {
                         modifier = Modifier
                             .size(54.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color(0xffff00ff))
+                            .background(GreenDeep)
                     ) {
                         AsyncImage(
                             model = R.drawable.fm_ic_default_icon,
