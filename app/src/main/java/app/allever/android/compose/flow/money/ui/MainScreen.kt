@@ -106,7 +106,7 @@ fun Content(viewModel: MainViewModel, navController: NavController, modifier: Mo
         when (rememberIndex) {
             0 -> {
                 log("Content: 明细")
-                FlowListScreen()
+                FlowListScreen(viewModel)
                 //明细
             }
 
