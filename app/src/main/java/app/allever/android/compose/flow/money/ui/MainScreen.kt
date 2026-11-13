@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -39,7 +41,7 @@ fun MainScreen(mainViewModel: MainViewModel, navController: NavController, modif
         modifier = modifier.fillMaxSize()
     ) {
         //top
-        TopBar(mainViewModel, navController)
+        TopBar(mainViewModel)
         //content
         Content(mainViewModel, navController, modifier = Modifier.weight(1f))
         //navigation
@@ -47,14 +49,53 @@ fun MainScreen(mainViewModel: MainViewModel, navController: NavController, modif
     }
 }
 
+@Preview(showBackground = false)
 @Composable
-fun TopBar(viewModel: MainViewModel, naviController: NavController) {
+fun TopBar(viewModel: MainViewModel) {
+    val rememberIndex by viewModel.pageState
+    val title = viewModel.navigationList[rememberIndex]
     Box(
         modifier = Modifier
-            .height(64.dp)
             .fillMaxWidth()
             .background(Color(0x1000ff00))
-    )
+            .padding(16.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(
+                model = R.mipmap.ic_launcher,
+                contentDescription = "logo",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+            )
+
+            Column(modifier = Modifier.padding(start = 8.dp).weight(1f)) {
+                //明细
+                Text(
+                    text = title,
+                    fontSize = 18.sp,
+                    lineHeight = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                )
+                //flowMoney
+                Text(
+                    text = "FlowMoney-随心记",
+                    fontSize = 11.sp,
+                    lineHeight = 12.sp,
+                    modifier = Modifier
+                )
+            }
+
+            AsyncImage(
+                model = R.mipmap.ic_launcher,
+                contentDescription = "logo",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(90.dp))
+            )
+        }
+    }
 }
 
 @Composable
@@ -70,16 +111,19 @@ fun Content(viewModel: MainViewModel, navController: NavController, modifier: Mo
                 FlowListScreen(viewModel, navController)
                 //明细
             }
+
             1 -> {
                 log("Content: 统计")
                 StaticScreen(viewModel, navController)
                 //统计
             }
+
             2 -> {
                 log("Content: 资产")
                 WealthScreen(viewModel, navController)
                 //资产
             }
+
             3 -> {
                 log("Content: 设置")
                 SettingScreen(viewModel, navController)
