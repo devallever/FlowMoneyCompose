@@ -1,11 +1,16 @@
 package app.allever.android.compose.flow.money.ui.widget
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -26,17 +31,32 @@ fun ExpenseDonutChart(
     amountText: String,
     statusText: String,
     segments: List<ChartSegment>,
-    modifier: Modifier = Modifier.size(210.dp), // 默认尺寸，外部可通过 modifier 覆盖
-    ringStrokeWidth: Dp = 28.dp
+    modifier: Modifier = Modifier.size(210.dp),
+    ringStrokeWidth: Dp = 28.dp,
+    animationDurationMillis: Int = 900 // 动画总时长（毫秒）
 ) {
     val totalValue = segments.sumOf { it.value.toDouble() }.toFloat()
 
-    // 直接使用透明背景的 Box 作为根容器
+    // 1. 创建动画进度状态（0f -> 1f）
+    val animationProgress = remember { Animatable(0f) }
+
+    // 2. 当组件首次加载或 segments 数据变化时，触发顺时针动画
+    LaunchedEffect(segments) {
+        animationProgress.snapTo(0f) // 每次数据更新先重置到 0
+        animationProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = animationDurationMillis,
+                easing = FastOutSlowInEasing // 先快后慢的物理缓动曲线，视觉最自然
+            )
+        )
+    }
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        // 1. 底层：多段彩色圆环
+        // 底层：带顺时针动画的多段彩色圆环
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokePx = ringStrokeWidth.toPx()
             val diameter = size.minDimension - strokePx
@@ -47,14 +67,18 @@ fun ExpenseDonutChart(
             val arcSize = Size(diameter, diameter)
 
             var currentStartAngle = -90f
+            val progress = animationProgress.value
 
             if (totalValue > 0f) {
                 segments.forEach { segment ->
-                    val sweepAngle = (segment.value / totalValue) * 360f
+                    // 将目标角度乘以当前动画进度（0f ~ 1f）
+                    val targetSweepAngle = (segment.value / totalValue) * 360f
+                    val animatedSweepAngle = targetSweepAngle * progress
+
                     drawArc(
                         color = segment.color,
                         startAngle = currentStartAngle,
-                        sweepAngle = sweepAngle,
+                        sweepAngle = animatedSweepAngle,
                         useCenter = false,
                         topLeft = topLeftOffset,
                         size = arcSize,
@@ -63,12 +87,13 @@ fun ExpenseDonutChart(
                             cap = StrokeCap.Butt
                         )
                     )
-                    currentStartAngle += sweepAngle
+                    // 下一段的起始角度也同步按 animatedSweepAngle 推进，实现全环一体顺时针展开
+                    currentStartAngle += animatedSweepAngle
                 }
             }
         }
 
-        // 2. 顶层：中心文字与胶囊标签
+        // 顶层：中心文字与胶囊标签
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
