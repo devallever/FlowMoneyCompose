@@ -42,11 +42,12 @@ import app.allever.android.compose.flow.money.MainViewModel
 import app.allever.android.compose.flow.money.R
 import app.allever.android.compose.flow.money.data.ChartSegment
 import app.allever.android.compose.flow.money.data.LegendItem
+import app.allever.android.compose.flow.money.data.WeeklyBarData
 import app.allever.android.compose.flow.money.theme.GreenDeep
-import app.allever.android.compose.flow.money.theme.GreenLight
 import app.allever.android.compose.flow.money.theme.GreenMiddle
 import app.allever.android.compose.flow.money.ui.widget.ExpenseDonutChart
 import app.allever.android.compose.flow.money.ui.widget.ExpenseLegendFlow
+import app.allever.android.compose.flow.money.ui.widget.WeeklyExpenseBarChart
 
 @Composable
 fun StaticScreen(viewModel: MainViewModel, navController: NavController) {
@@ -72,11 +73,82 @@ fun StaticScreen(viewModel: MainViewModel, navController: NavController) {
 
             item {
                 //Chart
-                Chart()
+                RingChart()
+            }
+
+            item {
+                WeeklyBarChar()
             }
         }
     }
 }
+
+@Composable
+fun WeeklyBarChar() {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        modifier = Modifier
+            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            //支出构成分布
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(verticalAlignment = CenterVertically) {
+                    //icon
+                    Image(
+                        painter = painterResource(id = R.drawable.fm_ic_default_icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        colorFilter = ColorFilter.tint(GreenDeep)
+                    )
+                    Text(
+                        text = "周支出趋势",
+                        fontSize = 18.sp,
+                        lineHeight = 18.sp,
+                        color = Color.DarkGray,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                }
+                //text 共58笔消费
+                Text(
+                    text = "日均:¥141.29",
+                    fontSize = 12.sp,
+                    lineHeight = 12.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
+            }
+
+            val weeklyData = listOf(
+                WeeklyBarData(label = "第1周", value = 1120f, formattedValue = "¥1,120"),
+                WeeklyBarData(label = "第2周", value = 980f, formattedValue = "¥980"),
+                WeeklyBarData(
+                    label = "第3周", value = 1460f, formattedValue = "¥1,460", isPeak = true
+                ),
+                WeeklyBarData(label = "第4周", value = 820f, formattedValue = "¥820")
+            )
+
+            Box(modifier = Modifier.padding(0.dp)) {
+                WeeklyExpenseBarChart(
+                    items = weeklyData, baselineValue = 1095f, onBarSelected = { index, item ->
+                        // 可在此处联动更新页面其他数据，如展示该周消费明细
+                    })
+            }
+
+        }
+    }
+}
+
 
 @Composable
 fun PreviewIncomeOutcome() {
@@ -214,7 +286,7 @@ fun PreviewIncomeOutcome() {
 
 
 @Composable
-fun Chart() {
+fun RingChart() {
     //card
     Card(
         colors = CardDefaults.cardColors(
@@ -288,7 +360,9 @@ fun Chart() {
             )
 
             ExpenseLegendFlow(
-                items = legendItems, modifier = Modifier.padding(top = 30.dp).fillMaxWidth()
+                items = legendItems, modifier = Modifier
+                    .padding(top = 30.dp)
+                    .fillMaxWidth()
             )
         }
     }
