@@ -261,7 +261,7 @@ fun FlowListScreenList(viewModel: MainViewModel) {
             ) {
                 item.list.forEachIndexed { index, detail ->
                     val marginTop = if (index == 0) 16.dp else 8.dp
-                    val marginBottom = 8.dp
+                    val marginBottom = if (index == item.list.size - 1) 16.dp else 8.dp
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
